@@ -739,3 +739,125 @@ body {
   .cdh-num { font-size: 36px; }
   .two-col { grid-template-columns: 1fr; }
 }
+
+/* ═══════════ LIGHTNING TIMER ═══════════ */
+.lt-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: radial-gradient(ellipse at 50% 0%, #140A28 0%, var(--bg2) 60%);
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 260px;
+}
+.lt-cloud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  background: linear-gradient(180deg, rgba(40,10,80,.96) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+.lt-cloud-glow {
+  position: absolute;
+  top: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 260px; height: 44px;
+  border-radius: 50%;
+  background: rgba(100,40,200,.32);
+  filter: blur(14px);
+}
+.lt-prog-wrap {
+  width: 100%; max-width: 380px;
+  margin-bottom: 18px;
+  position: relative; z-index: 5;
+}
+.lt-prog-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(155,130,253,.38);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.lt-prog-bg {
+  width: 100%; height: 4px;
+  background: rgba(255,255,255,.05);
+  border-radius: 2px;
+}
+.lt-prog-fill {
+  height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, #7C5CFC, #C9B8FF);
+  box-shadow: 0 0 8px rgba(124,92,252,.5);
+  transition: width .8s ease;
+}
+.lt-timer-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  position: relative; z-index: 5;
+  margin-bottom: 12px;
+  transition: opacity .1s;
+}
+.lt-unit {
+  display: flex; flex-direction: column;
+  align-items: center;
+  min-width: 96px;
+}
+.lt-num {
+  font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+  font-size: 60px; font-weight: 700; line-height: 1;
+  color: #F4F3FF; letter-spacing: -2px;
+  text-shadow: 0 0 22px rgba(124,92,252,.45);
+}
+.lt-sep {
+  font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+  font-size: 48px; font-weight: 700;
+  color: rgba(124,92,252,.28);
+  line-height: 1; margin-top: 5px;
+}
+.lt-lbl {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(139,137,168,.4);
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+.lt-goal-pill {
+  position: relative; z-index: 5;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(124,92,252,.07);
+  border: 1px solid rgba(124,92,252,.18);
+  border-radius: 99px;
+  padding: 6px 18px;
+  font-size: 11px; font-weight: 700;
+  color: rgba(244,243,255,.38);
+  letter-spacing: 1px;
+}
+.lt-pdot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #FF6B35;
+  animation: ltPdot 1.2s ease infinite;
+}
+@keyframes ltPdot {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .2; }
+}
+#lt-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  border-radius: var(--radius-md);
+}
+@media (max-width: 480px) {
+  .lt-num { font-size: 44px; }
+  .lt-sep { font-size: 36px; }
+  .lt-unit { min-width: 72px; }
+}
+/* ═══════════ END LIGHTNING TIMER ═══════════ */

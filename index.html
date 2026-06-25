@@ -107,13 +107,52 @@
         <div class="hero-quote" id="quote-text"></div>
         <div class="hero-quote-author" id="quote-author"></div>
       </div>
-      <div class="hero-right">
-        <div class="countdown-mini">
-          <span style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:600;color:var(--p)" id="cd-goal-days">--</span>
-          <span style="font-size:13px;color:var(--t2);margin-left:8px">days left</span>
+      <!-- LIGHTNING TIMER BLOCK — replace existing countdown HTML with this -->
+      <div class="lt-wrap" id="lt-wrap">
+
+        <!-- Cloud at top -->
+        <div class="lt-cloud">
+          <div class="lt-cloud-glow"></div>
         </div>
-        <div class="cd-label">Until Sep 20, 2026</div>
-        <div class="cd-sub">86 days. Best version of you.</div>
+
+        <!-- Progress bar -->
+        <div class="lt-prog-wrap">
+          <div class="lt-prog-meta">
+            <span>Journey</span>
+            <span id="lt-pct">1%</span>
+          </div>
+          <div class="lt-prog-bg">
+            <div class="lt-prog-fill" id="lt-prog-fill" style="width:1%"></div>
+          </div>
+        </div>
+
+        <!-- Timer digits — entire block shatters -->
+        <div class="lt-timer-row" id="lt-timer-block">
+          <div class="lt-unit">
+            <div class="lt-num" id="lt-days">85</div>
+            <div class="lt-lbl">Days</div>
+          </div>
+          <div class="lt-sep">:</div>
+          <div class="lt-unit">
+            <div class="lt-num" id="lt-hours">00</div>
+            <div class="lt-lbl">Hours</div>
+          </div>
+          <div class="lt-sep">:</div>
+          <div class="lt-unit">
+            <div class="lt-num" id="lt-mins">00</div>
+            <div class="lt-lbl">Mins</div>
+          </div>
+        </div>
+
+        <!-- Goal pill -->
+        <div class="lt-goal-pill">
+          <div class="lt-pdot"></div>
+          September 20, 2026 &#8212; The Goal
+        </div>
+
+        <!-- Canvas for lightning + particles — sits over entire lt-wrap -->
+        <canvas id="lt-canvas"></canvas>
+
       </div>
     </div>
 

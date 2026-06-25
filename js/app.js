@@ -813,3 +813,282 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('levelup-overlay');
   if (overlay) overlay.addEventListener('click', () => overlay.classList.remove('active'));
 });
+
+// ═══════════ LIGHTNING TIMER ═══════════
+
+(function initLightningTimer() {
+
+  const TARGET   = new Date('2026-09-20T00:00:00');
+  const TOTAL    = 86;
+  let lastMin    = -1;
+  let phase      = 'idle';
+  let boltPts    = [], boltBranches = [], boltLife = 0;
+  let particles  = [];
+  let flashAlpha = 0;
+
+  // Canvas setup
+  const canvas = document.getElementById('lt-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  function resize() {
+    const wrap = document.getElementById('lt-wrap');
+    if (!wrap) return;
+    W = canvas.width  = wrap.offsetWidth;
+    H = canvas.height = wrap.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ── Countdown update ──
+  function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
+
+  function updateLTTimer() {
+    const now  = new Date();
+    const diff = TARGET - now;
+    if (diff <= 0) return;
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+
+    const dEl = document.getElementById('lt-days');
+    const hEl = document.getElementById('lt-hours');
+    const mEl = document.getElementById('lt-mins');
+    if (dEl) dEl.textContent = pad(d);
+    if (hEl) hEl.textContent = pad(h);
+    if (mEl) mEl.textContent = pad(m);
+
+    const pct = Math.min(98, Math.max(1, Math.round(((TOTAL - d) / TOTAL) * 100)));
+    const pf  = document.getElementById('lt-prog-fill');
+    const pl  = document.getElementById('lt-pct');
+    if (pf) pf.style.width = pct + '%';
+    if (pl) pl.textContent = pct + '%';
+
+    if (m !== lastMin) { lastMin = m; triggerStrike(); }
+  }
+
+  // ── Lightning bolt generation ──
+  function makeBolt(x1, y1, x2, y2, rough, depth) {
+    if (depth === 0 || Math.abs(y2 - y1) < 3) return [[x1,y1],[x2,y2]];
+    const mx = (x1+x2)/2, my = (y1+y2)/2;
+    const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+    const off = (Math.random() - .5) * len * rough;
+    const nx = -(y2-y1)/len, ny = (x2-x1)/len;
+    return [
+      ...makeBolt(x1,y1, mx+nx*off, my+ny*off, rough*.72, depth-1),
+      ...makeBolt(mx+nx*off, my+ny*off, x2,y2, rough*.72, depth-1),
+    ];
+  }
+
+  // ── Get timer block rect relative to canvas ──
+  function getTimerRect() {
+    const wrap  = document.getElementById('lt-wrap');
+    const block = document.getElementById('lt-timer-block');
+    if (!wrap || !block) return { cx: W/2, cy: H/2, w: 300, h: 80 };
+    const wr = wrap.getBoundingClientRect();
+    const br = block.getBoundingClientRect();
+    return {
+      cx: (br.left - wr.left) + br.width / 2,
+      cy: (br.top  - wr.top)  + br.height / 2,
+      w:  br.width,
+      h:  br.height,
+    };
+  }
+
+  // ── Spawn shatter particles ──
+  function spawnParticles(cx, cy, tw, th) {
+    particles = [];
+    const glyphs = ['8','5',':','1','4','2','0','3','D','H','M'];
+    for (let i = 0; i < 90; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = .5 + Math.random() * 6;
+      const isGlyph = Math.random() > .45;
+      particles.push({
+        x:   cx + (Math.random() - .5) * tw * .9,
+        y:   cy + (Math.random() - .5) * th * .7,
+        vx:  Math.cos(angle) * speed,
+        vy:  Math.sin(angle) * speed - Math.random() * 2,
+        life: 1,
+        decay: .012 + Math.random() * .018,
+        size: isGlyph ? 14 + Math.random() * 22 : 2 + Math.random() * 4,
+        isGlyph,
+        char: glyphs[Math.floor(Math.random() * glyphs.length)],
+        color: Math.random() > .5 ? '#C9B8FF' : Math.random() > .5 ? '#7C5CFC' : '#FF6B35',
+        rot:  Math.random() * Math.PI * 2,
+        rotV: (Math.random() - .5) * .15,
+        reforming: false,
+        tx: 0, ty: 0,
+      });
+    }
+  }
+
+  function startReform(cx, cy) {
+    particles.forEach(p => {
+      p.reforming = true;
+      p.tx = cx + (Math.random() - .5) * 80;
+      p.ty = cy + (Math.random() - .5) * 24;
+      p.decay = .006;
+    });
+  }
+
+  // ── Main trigger ──
+  function triggerStrike() {
+    if (phase !== 'idle') return;
+    phase = 'descend';
+
+    const rect = getTimerRect();
+    const startX = rect.cx + (Math.random() - .5) * 50;
+
+    boltPts      = makeBolt(startX, 0, rect.cx, rect.cy, .55, 7);
+    boltBranches = [];
+    boltLife     = 0;
+
+    for (let i = 4; i < boltPts.length - 4; i += 5) {
+      if (Math.random() > .5) {
+        const bx = boltPts[i][0], by = boltPts[i][1];
+        boltBranches.push(
+          makeBolt(bx, by, bx + (Math.random() - .5) * 90, by + 30 + Math.random() * 60, .45, 4)
+        );
+      }
+    }
+
+    // Impact after bolt lingers ~900ms
+    setTimeout(() => {
+      phase      = 'impact';
+      flashAlpha = 1;
+      const tb = document.getElementById('lt-timer-block');
+      if (tb) tb.style.opacity = '0';
+      spawnParticles(rect.cx, rect.cy, rect.w, rect.h);
+
+      setTimeout(() => {
+        phase = 'reform';
+        startReform(rect.cx, rect.cy);
+        setTimeout(() => {
+          updateLTTimer();
+          const tb2 = document.getElementById('lt-timer-block');
+          if (tb2) tb2.style.opacity = '1';
+          particles = [];
+          phase     = 'idle';
+        }, 800);
+      }, 700);
+    }, 900);
+  }
+
+  // ── Render loop ──
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+
+    // flash overlay
+    if (flashAlpha > 0) {
+      ctx.fillStyle = `rgba(180,120,255,${flashAlpha * .45})`;
+      ctx.fillRect(0, 0, W, H);
+      flashAlpha = Math.max(0, flashAlpha - .032);
+    }
+
+    // bolt
+    if (phase === 'descend' && boltPts.length > 1) {
+      boltLife++;
+      const revealFrac = Math.min(1, boltLife / 20);
+      const showCount  = Math.max(2, Math.floor(boltPts.length * revealFrac));
+      const pts        = boltPts.slice(0, showCount);
+      const flicker    = .75 + Math.sin(boltLife * .8) * .25;
+
+      // outer glow
+      ctx.save();
+      ctx.strokeStyle = `rgba(180,140,255,${flicker * .4})`;
+      ctx.lineWidth = 10; ctx.shadowBlur = 28; ctx.shadowColor = '#9B82FD';
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
+      // mid
+      ctx.strokeStyle = `rgba(220,190,255,${flicker * .65})`;
+      ctx.lineWidth = 3.5; ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
+      // core
+      ctx.strokeStyle = `rgba(255,255,255,${flicker})`;
+      ctx.lineWidth = 1.5; ctx.shadowBlur = 6; ctx.shadowColor = '#fff';
+      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
+      ctx.restore();
+
+      // branches
+      if (revealFrac > .6) {
+        boltBranches.forEach(bp => {
+          if (bp.length < 2) return;
+          ctx.save();
+          ctx.strokeStyle = `rgba(200,170,255,${flicker * .5})`;
+          ctx.lineWidth = 1.2; ctx.shadowBlur = 10; ctx.shadowColor = '#9B82FD';
+          ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(bp[0][0], bp[0][1]);
+          for (let i = 1; i < bp.length; i++) ctx.lineTo(bp[i][0], bp[i][1]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+
+      // tip glow
+      if (revealFrac > .8) {
+        const tip = pts[pts.length - 1];
+        ctx.save();
+        const g = ctx.createRadialGradient(tip[0], tip[1], 0, tip[0], tip[1], 42);
+        g.addColorStop(0,  `rgba(255,255,255,${flicker * .55})`);
+        g.addColorStop(.4, `rgba(160,100,255,${flicker * .28})`);
+        g.addColorStop(1,  'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(tip[0], tip[1], 42, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // particles
+    if ((phase === 'impact' || phase === 'reform') && particles.length) {
+      particles.forEach(p => {
+        if (p.life <= 0) return;
+        if (p.reforming) {
+          p.vx += (p.tx - p.x) * .07;
+          p.vy += (p.ty - p.y) * .07;
+          p.vx *= .82; p.vy *= .82;
+        } else {
+          p.vy += .1;
+          p.vx *= .98;
+        }
+        p.x += p.vx; p.y += p.vy;
+        p.rot += p.rotV;
+        p.life -= p.decay;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.shadowBlur = 8; ctx.shadowColor = p.color;
+        if (p.isGlyph) {
+          ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+          ctx.font = `700 ${p.size}px 'JetBrains Mono',monospace`;
+          ctx.fillStyle = p.color;
+          ctx.fillText(p.char, -p.size * .3, p.size * .35);
+        } else {
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      });
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  // ── Init ──
+  updateLTTimer();
+  setInterval(updateLTTimer, 30000);
+  setTimeout(triggerStrike, 1200);
+  render();
+
+})();
+
+// ═══════════ END LIGHTNING TIMER ═══════════
