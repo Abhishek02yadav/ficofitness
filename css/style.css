@@ -744,13 +744,16 @@ body {
 .lt-wrap {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-md);
-  background: radial-gradient(ellipse at 50% 0%, #140A28 0%, var(--bg2) 60%);
-  padding: 24px 20px 20px;
+  border-radius: var(--radius-lg);
+  background: radial-gradient(ellipse at 50% 0%, #1A0A35 0%, #0D0A1E 100%);
+  padding: 36px 32px 32px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-height: 260px;
+  align-items: flex-start;
+  min-height: 320px;
+  border: 1px solid rgba(124,92,252,.18);
+  border-top: 1px solid rgba(124,92,252,.35);
+  width: 100%;
 }
 .lt-cloud {
   position: absolute;
@@ -762,17 +765,16 @@ body {
 }
 .lt-cloud-glow {
   position: absolute;
-  top: 8px; left: 50%;
-  transform: translateX(-50%);
-  width: 260px; height: 44px;
-  border-radius: 50%;
-  background: rgba(100,40,200,.32);
-  filter: blur(14px);
+  top: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(180deg, rgba(80,30,160,.45) 0%, transparent 100%);
+  filter: blur(20px);
 }
 .lt-prog-wrap {
-  width: 100%; max-width: 380px;
-  margin-bottom: 18px;
+  width: 100%;
+  margin-bottom: 20px;
   position: relative; z-index: 5;
+  align-self: stretch;
 }
 .lt-prog-meta {
   display: flex;
@@ -797,28 +799,29 @@ body {
 .lt-timer-row {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0;
   position: relative; z-index: 5;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   transition: opacity .1s;
 }
 .lt-unit {
   display: flex; flex-direction: column;
-  align-items: center;
-  min-width: 96px;
+  align-items: flex-start;
+  min-width: 110px;
 }
 .lt-num {
   font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
-  font-size: 60px; font-weight: 700; line-height: 1;
-  color: #F4F3FF; letter-spacing: -2px;
-  text-shadow: 0 0 22px rgba(124,92,252,.45);
+  font-size: 72px; font-weight: 700; line-height: 1;
+  color: #F4F3FF; letter-spacing: -3px;
+  text-shadow: 0 0 30px rgba(124,92,252,.5), 0 0 60px rgba(124,92,252,.15);
 }
 .lt-sep {
   font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
-  font-size: 48px; font-weight: 700;
-  color: rgba(124,92,252,.28);
-  line-height: 1; margin-top: 5px;
+  font-size: 60px; font-weight: 700;
+  color: rgba(124,92,252,.25);
+  line-height: 1; margin-top: 3px;
+  padding: 0 4px;
 }
 .lt-lbl {
   font-size: 10px; font-weight: 700;
@@ -837,6 +840,7 @@ body {
   font-size: 11px; font-weight: 700;
   color: rgba(244,243,255,.38);
   letter-spacing: 1px;
+  align-self: flex-start;
 }
 .lt-pdot {
   width: 6px; height: 6px;
@@ -855,9 +859,15 @@ body {
   z-index: 20;
   border-radius: var(--radius-md);
 }
+@media (max-width: 768px) {
+  .lt-wrap { padding: 24px 20px 20px; min-height: 240px; }
+  .lt-num { font-size: 48px; }
+  .lt-sep { font-size: 42px; }
+  .lt-unit { min-width: 78px; }
+}
 @media (max-width: 480px) {
-  .lt-num { font-size: 44px; }
-  .lt-sep { font-size: 36px; }
-  .lt-unit { min-width: 72px; }
+  .lt-num { font-size: 38px; letter-spacing: -1px; }
+  .lt-sep { font-size: 32px; }
+  .lt-unit { min-width: 62px; }
 }
 /* ═══════════ END LIGHTNING TIMER ═══════════ */
