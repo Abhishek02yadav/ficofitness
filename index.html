@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FicoFit — Abhishek's Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── TOAST ─────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── LEVEL-UP OVERLAY ──────────────────────────────────── -->
+<div id="levelup-overlay">
+  <div class="levelup-content">
+    <div class="levelup-pre">LEVEL UP!</div>
+    <div id="levelup-num">2</div>
+    <div id="levelup-name">Consistent</div>
+    <div class="levelup-sub">Keep grinding. The anime arc awaits.</div>
+  </div>
+</div>
+<div id="confetti-container"></div>
+
+<!-- ── SIDEBAR ───────────────────────────────────────────── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">F</div>
+    <span class="brand-name">FicoFit</span>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="user-avatar">AY</div>
+    <div>
+      <div class="user-name">Abhishek Yadav</div>
+      <div class="user-meta">80 kg &middot; 5&rsquo;9&rdquo; &middot; Veg</div>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <button class="tab-btn active" data-tab="today">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Today</span>
+    </button>
+    <button class="tab-btn" data-tab="progress">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Progress</span>
+    </button>
+    <button class="tab-btn" data-tab="goals">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      <span>Goals</span>
+    </button>
+    <button class="tab-btn" data-tab="diet">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
+      <span>Diet</span>
+    </button>
+    <button class="tab-btn" data-tab="budget">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      <span>Budget</span>
+    </button>
+    <button class="tab-btn" data-tab="supps">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="M8.5 8.5 16 16"/></svg>
+      <span>Supps</span>
+    </button>
+  </div>
+
+  <div class="sidebar-streak">
+    <div class="streak-box">
+      <span class="streak-bolt">&#9889;</span>
+      <div>
+        <div class="streak-num" id="streak-value">0</div>
+        <div class="streak-meta">
+          <div class="streak-label">day streak</div>
+          <div class="streak-sub">Best: <span id="streak-longest">0</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MOBILE HEADER ─────────────────────────────────────── -->
+<header class="mobile-header">
+  <button class="menu-btn" id="menu-btn" aria-label="Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <span class="mobile-brand">FicoFit</span>
+  <div class="mobile-streak-badge">
+    <span>&#9889;</span>
+    <span id="mob-streak-val">0</span>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- ── MAIN ──────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- ══════════ TAB: TODAY ══════════ -->
+  <div class="tab-panel active" id="tab-today">
+
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div class="hero-left">
+        <div class="hero-greeting" id="greeting-text">Evening session. Make it count.</div>
+        <div class="hero-quote" id="quote-text"></div>
+        <div class="hero-quote-author" id="quote-author"></div>
+      </div>
+      <div class="hero-right">
+        <div class="countdown-mini">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:600;color:var(--p)" id="cd-goal-days">--</span>
+          <span style="font-size:13px;color:var(--t2);margin-left:8px">days left</span>
+        </div>
+        <div class="cd-label">Until Sep 20, 2026</div>
+        <div class="cd-sub">86 days. Best version of you.</div>
+      </div>
+    </div>
+
+    <!-- XP Bar -->
+    <div class="xp-bar-card">
+      <div class="xp-bar-header">
+        <span class="xp-level-label" id="xp-level-label">Lv.1 Beginner</span>
+        <span class="xp-nums" id="xp-number">0 XP / 100</span>
+      </div>
+      <div class="xp-track">
+        <div class="xp-fill" id="xp-bar-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Day Label -->
+    <div style="font-size:13px;color:var(--t2);margin-bottom:14px" id="today-day-label"></div>
+
+    <!-- Week Grid -->
+    <div class="card">
+      <h3 class="card-title">This Week</h3>
+      <div class="week-grid" id="week-grid"></div>
+    </div>
+
+    <!-- Workout Card -->
+    <div class="card">
+      <div class="wo-header">
+        <span class="workout-type-pill" id="workout-label">Today's Workout</span>
+        <div style="font-size:12px;color:var(--t2)" id="workout-done-count">0/0</div>
+      </div>
+      <div class="wo-prog-row">
+        <span class="wo-pct" id="workout-progress-pct">0%</span>
+        <div class="wo-track"><div class="wo-fill" id="workout-progress-bar" style="width:0%"></div></div>
+      </div>
+      <div id="exercise-list"></div>
+    </div>
+
+    <!-- Meals Card -->
+    <div class="card">
+      <h3 class="card-title">Meals Today</h3>
+      <div class="nut-row">
+        <div class="nut-label-row">
+          <span>Calories</span>
+          <span id="cal-current">0 / 2525 kcal</span>
+        </div>
+        <div class="nut-track"><div class="nut-fill cal-bar" id="cal-bar" style="width:0%"></div></div>
+      </div>
+      <div class="nut-row" style="margin-bottom:14px">
+        <div class="nut-label-row">
+          <span>Protein</span>
+          <span id="prot-current">0 / 126g protein</span>
+        </div>
+        <div class="nut-track"><div class="nut-fill prot-bar" id="prot-bar" style="width:0%"></div></div>
+      </div>
+      <div id="meals-list"></div>
+    </div>
+
+    <!-- Water Card -->
+    <div class="card">
+      <h3 class="card-title">Water Intake</h3>
+      <div class="water-glasses-row">
+        <button class="water-btn" aria-label="Glass 1">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 2">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 3">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 4">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 5">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 6">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 7">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 8">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+      </div>
+      <div class="water-label" id="water-count">0/8 glasses</div>
+    </div>
+
+    <div style="text-align:right;margin-top:8px">
+      <button class="reset-btn" id="reset-btn">Reset All Data</button>
+    </div>
+
+  </div><!-- /tab-today -->
+
+  <!-- ══════════ TAB: PROGRESS ══════════ -->
+  <div class="tab-panel" id="tab-progress">
+    <div class="page-header">
+      <h1 class="page-title">Progress</h1>
+    </div>
+
+    <!-- Level Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Level &amp; XP</h3>
+        <span id="prog-xp-total" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--p2);background:var(--p-dim);padding:3px 10px;border-radius:99px;border:1px solid var(--p-border)">0 XP total</span>
+      </div>
+      <div class="level-display">
+        <div class="level-big" id="prog-level-num">Lv.1</div>
+        <div>
+          <div class="level-name" id="prog-level-name">Beginner</div>
+          <div class="level-next" id="prog-xp-next">Next: Consistent at 100 XP</div>
+        </div>
+      </div>
+      <div class="prog-track" style="margin-top:12px">
+        <div class="prog-fill" id="prog-xp-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Stats Table -->
+    <div class="card">
+      <h3 class="card-title">Stats</h3>
+      <table class="stats-table">
+        <tr><td>Total Workouts</td><td id="stat-workouts">0</td></tr>
+        <tr><td>Total Exercises</td><td id="stat-exercises">0</td></tr>
+        <tr><td>Meals Logged</td><td id="stat-meals">0</td></tr>
+        <tr><td>Current Streak</td><td id="stat-streak">0</td></tr>
+        <tr><td>Longest Streak</td><td id="stat-longest">0</td></tr>
+        <tr><td>Calorie Days Hit</td><td id="stat-cal-days">0</td></tr>
+        <tr><td>Protein Days Hit</td><td id="stat-prot-days">0</td></tr>
+        <tr><td>Achievements</td><td id="stat-achievements">0 / 16</td></tr>
+      </table>
+    </div>
+
+    <!-- Achievements -->
+    <div class="card">
+      <h3 class="card-title">Achievements</h3>
+      <div id="achievements-grid"></div>
+    </div>
+
+  </div><!-- /tab-progress -->
+
+  <!-- ══════════ TAB: GOALS ══════════ -->
+  <div class="tab-panel" id="tab-goals">
+    <div class="page-header">
+      <h1 class="page-title">Goals</h1>
+    </div>
+
+    <!-- Countdown Hero -->
+    <div class="goal-countdown-card">
+      <div class="gc-tagline">86 days. Best version of you.</div>
+      <div class="countdown-hero">
+        <div class="cdh-block">
+          <span class="cdh-num" id="cd-days">--</span>
+          <span class="cdh-lbl">days</span>
+        </div>
+        <div class="cdh-sep">:</div>
+        <div class="cdh-block">
+          <span class="cdh-num" id="cd-hours">--</span>
+          <span class="cdh-lbl">hrs</span>
+        </div>
+        <div class="cdh-sep">:</div>
+        <div class="cdh-block">
+          <span class="cdh-num" id="cd-mins">--</span>
+          <span class="cdh-lbl">min</span>
+        </div>
+        <div class="cdh-sep">:</div>
+        <div class="cdh-block">
+          <span class="cdh-num" id="cd-secs">--</span>
+          <span class="cdh-lbl">sec</span>
+        </div>
+      </div>
+      <div class="gc-sub">Sep 20, 2026 &mdash; your deadline</div>
+    </div>
+
+    <!-- Skill Tree -->
+    <div class="card">
+      <h3 class="card-title">Calisthenics Skill Tree</h3>
+      <p class="section-sub">Current step highlighted. Unlock progressively.</p>
+
+      <div class="skill-paths">
+        <div>
+          <div class="skill-path-label">PUSH PATH</div>
+          <div class="skill-path-row" id="skill-path-push"></div>
+        </div>
+        <div>
+          <div class="skill-path-label">PULL PATH</div>
+          <div class="skill-path-row" id="skill-path-pull"></div>
+        </div>
+        <div>
+          <div class="skill-path-label">CORE PATH</div>
+          <div class="skill-path-row" id="skill-path-core"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pull-up Progression Plan -->
+    <div class="card">
+      <h3 class="card-title">Pull-up Progression Plan</h3>
+      <p class="section-sub">Currently at 0 pull-ups. Follow this path:</p>
+      <div class="pullup-plan">
+        <div class="pullup-row">
+          <span class="pullup-week">Week 1&ndash;2</span>
+          <span class="pullup-focus">Dead Hang 4&times;20s + Australian Rows 4&times;8</span>
+        </div>
+        <div class="pullup-row">
+          <span class="pullup-week">Week 3&ndash;4</span>
+          <span class="pullup-focus">Negative Pull-ups 3&times;5 + Dead Hang 3&times;30s</span>
+        </div>
+        <div class="pullup-row">
+          <span class="pullup-week">Week 5&ndash;6</span>
+          <span class="pullup-focus">Band-Assisted Pull-ups 3&times;5&ndash;8</span>
+        </div>
+        <div class="pullup-row" style="border-left:3px solid var(--p);background:var(--p-dim)">
+          <span class="pullup-week text-p">Week 7&ndash;8</span>
+          <span class="pullup-focus" style="color:var(--p2)">First unassisted pull-up!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strength Goals -->
+    <div class="card">
+      <h3 class="card-title">Strength Goals</h3>
+      <div class="strength-grid">
+        <div class="str-item">
+          <div class="str-name">Bench Press</div>
+          <input type="number" class="str-input" id="goal-benchPress" placeholder="0 kg" min="0" max="200">
+          <div class="str-unit">kg current &mdash; target 80 kg &times; 8</div>
+        </div>
+        <div class="str-item">
+          <div class="str-name">Squat</div>
+          <input type="number" class="str-input" id="goal-squat" placeholder="0 kg" min="0" max="250">
+          <div class="str-unit">kg current &mdash; target 90 kg &times; 8</div>
+        </div>
+        <div class="str-item">
+          <div class="str-name">Deadlift</div>
+          <input type="number" class="str-input" id="goal-deadlift" placeholder="0 kg" min="0" max="300">
+          <div class="str-unit">kg current &mdash; target 100 kg &times; 6</div>
+        </div>
+        <div class="str-item">
+          <div class="str-name">Pull-ups</div>
+          <input type="number" class="str-input" id="goal-pullups" placeholder="0 reps" min="0" max="50">
+          <div class="str-unit">reps current &mdash; target 15 reps</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fat Loss Goal -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Fat Loss Goal</h3>
+        <span style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--warn-dim);color:var(--warn);border:1px solid var(--warn-border)">Tracking</span>
+      </div>
+      <p class="section-sub">Target: visible fat loss — face &amp; waist slim hoga</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="padding:5px 12px;border-radius:99px;background:var(--bg3);border:1px solid var(--b2);font-size:12px;color:var(--t2)">2525 kcal/day</span>
+        <span style="padding:5px 12px;border-radius:99px;background:var(--bg3);border:1px solid var(--b2);font-size:12px;color:var(--t2)">10k steps daily</span>
+        <span style="padding:5px 12px;border-radius:99px;background:var(--bg3);border:1px solid var(--b2);font-size:12px;color:var(--t2)">6-day training</span>
+        <span style="padding:5px 12px;border-radius:99px;background:var(--bg3);border:1px solid var(--b2);font-size:12px;color:var(--t2)">Progressive overload</span>
+      </div>
+    </div>
+
+  </div><!-- /tab-goals -->
+
+  <!-- ══════════ TAB: DIET ══════════ -->
+  <div class="tab-panel" id="tab-diet">
+    <div class="page-header">
+      <h1 class="page-title">Diet Plan</h1>
+    </div>
+
+    <div class="diet-totals-row">
+      <span class="diet-total-chip" id="diet-total-cal">2525 kcal / day</span>
+      <span style="color:var(--t3)">&middot;</span>
+      <span class="diet-total-chip" id="diet-total-prot">126g protein / day</span>
+      <span style="color:var(--t3)">&middot;</span>
+      <span style="font-size:13px;color:var(--t2)">Vegetarian Recomp</span>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Meal Plan</h3>
+      <div id="diet-full-list"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Trainer&rsquo;s Rules</h3>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">9 PM ke baad kuch nahi khana</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Soya max 40g/day &mdash; gyno risk at 22</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Pani 3&ndash;4 litre daily</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">10k steps daily &mdash; yahi tera cardio hai</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Ghar ka dahi daily banao</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Ghar ki sabzi avoid mat karo</div>
+      </div>
+    </div>
+
+  </div><!-- /tab-diet -->
+
+  <!-- ══════════ TAB: BUDGET ══════════ -->
+  <div class="tab-panel" id="tab-budget">
+    <div class="page-header">
+      <h1 class="page-title">Budget</h1>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Daily &amp; Monthly Cost</h3>
+        <span style="font-size:12px;color:var(--t2);background:var(--go-dim);padding:3px 10px;border-radius:99px;border:1px solid var(--go-border);color:var(--go)">Optimized</span>
+      </div>
+      <table class="budget-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th style="text-align:right">Daily</th>
+            <th style="text-align:right">Monthly</th>
+          </tr>
+        </thead>
+        <tbody id="budget-tbody"></tbody>
+        <tfoot>
+          <tr class="budget-total-row">
+            <td><strong>Total</strong></td>
+            <td class="num" id="budget-daily-total">Rs. 199 / day</td>
+            <td class="num" id="budget-monthly-total">Rs. 5,970 / month</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Why This Budget?</h3>
+      <div style="font-size:13px;color:var(--t2);line-height:1.7">
+        <p>This is a <strong style="color:var(--t1)">budget-optimized recomp plan</strong> using home food + minimal supplements.</p>
+        <p style="margin-top:8px">Gym membership at Rs. 1,350/month is included. No fancy protein bars or extra supplements needed &mdash; the food plan already hits 126g protein/day from real food.</p>
+      </div>
+    </div>
+
+  </div><!-- /tab-budget -->
+
+  <!-- ══════════ TAB: SUPPS ══════════ -->
+  <div class="tab-panel" id="tab-supps">
+    <div class="page-header">
+      <h1 class="page-title">Supplements</h1>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Daily Stack</h3>
+      <div id="supps-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Water Tracker</h3>
+        <span style="font-size:11px;color:var(--t2);background:var(--bg3);padding:3px 10px;border-radius:99px;border:1px solid var(--b2)">Target: 3&ndash;4 L</span>
+      </div>
+      <div class="water-glasses-row">
+        <button class="water-btn" aria-label="Glass 1">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 2">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 3">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 4">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 5">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 6">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 7">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+        <button class="water-btn" aria-label="Glass 8">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.5 7 5 10.5 5 14a7 7 0 0 0 14 0c0-3.5-3-7-7-12z"/></svg>
+        </button>
+      </div>
+      <div class="water-label" id="water-count-supps" style="margin-top:8px;font-size:12px;color:var(--t2)">0/8 glasses today</div>
+
+      <div style="margin-top:14px">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px 10px;color:var(--t3);font-size:11px;font-weight:500;border-bottom:1px solid var(--b1)">Supplement</th>
+              <th style="text-align:left;padding:8px 10px;color:var(--t3);font-size:11px;font-weight:500;border-bottom:1px solid var(--b1)">Dose</th>
+              <th style="text-align:left;padding:8px 10px;color:var(--t3);font-size:11px;font-weight:500;border-bottom:1px solid var(--b1)">When</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:10px;color:var(--t1);font-weight:500;border-bottom:1px solid var(--b1)">Creatine</td>
+              <td style="padding:10px;color:var(--t2);border-bottom:1px solid var(--b1)">3&ndash;5g</td>
+              <td style="padding:10px;color:var(--t2);border-bottom:1px solid var(--b1)">Post-workout</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;color:var(--t1);font-weight:500;border-bottom:1px solid var(--b1)">Omega-3</td>
+              <td style="padding:10px;color:var(--t2);border-bottom:1px solid var(--b1)">1&ndash;2g EPA+DHA</td>
+              <td style="padding:10px;color:var(--t2);border-bottom:1px solid var(--b1)">Dinner</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;color:var(--t1);font-weight:500;border-bottom:1px solid var(--b1)">D3 + K2</td>
+              <td style="padding:10px;color:var(--t2);border-bottom:1px solid var(--b1)">1000&ndash;2000 IU</td>
+              <td style="padding:10px;color:var(--t2);border-bottom:1px solid var(--b1)">Lunch</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;color:var(--t1);font-weight:500">B12</td>
+              <td style="padding:10px;color:var(--t2)">500&ndash;1000mcg</td>
+              <td style="padding:10px;color:var(--t2)">Breakfast</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /tab-supps -->
+
+</main>
+
+<script>
+  // Mobile sidebar toggle
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  document.getElementById('menu-btn').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('visible');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+  });
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+    });
+  });
+</script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
