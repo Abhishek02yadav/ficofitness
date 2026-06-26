@@ -58,20 +58,12 @@ function getWeekMonday(dateStr) {
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 
-function getTimeOfDay() {
-  const h = new Date().getHours();
-  if (h < 12) return 'morning';
-  if (h < 17) return 'afternoon';
-  return 'evening';
-}
-
 function getGreeting() {
-  const map = {
-    morning:   'Morning session. Make it count.',
-    afternoon: 'Afternoon grind. Stay locked in.',
-    evening:   'Evening session. Finish strong.',
-  };
-  return map[getTimeOfDay()];
+  const h = new Date().getHours();
+  if (h >= 5  && h < 11) return 'Rise and grind, Abhishek.';
+  if (h >= 11 && h < 17) return 'Stay locked in.';
+  if (h >= 17 && h < 21) return 'Evening session. Finish strong.';
+  return 'Recovery mode. Rest well.';
 }
 
 // ── XP & Levels ───────────────────────────────────────────────────────────────
@@ -347,15 +339,15 @@ function renderToday() {
   const key     = todayKey();
   const workout = WORKOUTS[dayIdx];
 
-  const greetEl = document.getElementById('greeting-text');
+  const greetEl = document.getElementById('lt-greeting');
   if (greetEl) greetEl.textContent = getGreeting();
 
   const dayLblEl = document.getElementById('today-day-label');
   if (dayLblEl) dayLblEl.textContent = DAYS[dayIdx] + ' — ' + workout.label;
 
   const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-  const qEl  = document.getElementById('quote-text');
-  const qaEl = document.getElementById('quote-author');
+  const qEl  = document.getElementById('lt-quote-text');
+  const qaEl = document.getElementById('lt-quote-author');
   if (qEl)  qEl.textContent  = '"' + q.text + '"';
   if (qaEl) qaEl.textContent = '— ' + q.author;
 

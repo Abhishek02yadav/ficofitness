@@ -241,21 +241,24 @@ body {
 
 /* ── HERO BANNER ─────────────────────────────────────────────────────────────── */
 .hero-banner {
-  background: linear-gradient(135deg, var(--p-dim), var(--bg2));
-  border: 1px solid var(--p-border);
-  border-radius: var(--radius);
-  padding: 22px 24px; margin-bottom: 14px;
-  display: flex; align-items: center;
-  justify-content: space-between; flex-wrap: wrap; gap: 20px;
+  margin-bottom: 14px;
 }
-.hero-left { flex: 1; min-width: 200px; }
-.hero-greeting {
+.lt-greeting {
   font-family: 'Syne', sans-serif;
-  font-size: 22px; font-weight: 700; color: var(--t1); margin-bottom: 10px;
+  font-size: 28px; font-weight: 700; color: var(--t1);
+  line-height: 1.2; margin-bottom: 10px;
+  position: relative; z-index: 5; max-width: 420px;
 }
-.hero-quote       { font-style: italic; font-size: 13px; color: var(--t2); line-height: 1.5; max-width: 320px; }
-.hero-quote-author { font-size: 11px; color: var(--t3); margin-top: 4px; }
-.hero-right { text-align: center; }
+.lt-quote-block { margin-bottom: 24px; position: relative; z-index: 5; }
+.lt-quote-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; font-style: italic;
+  color: rgba(244,243,255,0.45); line-height: 1.5;
+}
+.lt-quote-author {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; color: rgba(244,243,255,0.25); margin-top: 4px;
+}
 
 /* ── XP BAR ─────────────────────────────────────────────────────────────────── */
 .xp-bar-card {
@@ -735,7 +738,7 @@ body {
 }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .hero-banner { flex-direction: column; }
+
   .cdh-num { font-size: 36px; }
   .two-col { grid-template-columns: 1fr; }
 }
@@ -750,7 +753,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-height: 320px;
+  min-height: 380px;
   border: 1px solid rgba(124,92,252,.18);
   border-top: 1px solid rgba(124,92,252,.35);
   width: 100%;
@@ -860,7 +863,8 @@ body {
   border-radius: var(--radius-md);
 }
 @media (max-width: 768px) {
-  .lt-wrap { padding: 24px 20px 20px; min-height: 240px; }
+  .lt-wrap { padding: 24px 20px 20px; min-height: 340px; }
+  .lt-greeting { font-size: 22px; }
   .lt-num { font-size: 48px; }
   .lt-sep { font-size: 42px; }
   .lt-unit { min-width: 78px; }
