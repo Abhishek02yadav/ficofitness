@@ -180,6 +180,40 @@
       <div class="week-grid" id="week-grid"></div>
     </div>
 
+    <!-- STEPS TRACKER CARD -->
+    <div class="card steps-card">
+      <div class="card-header">
+        <h3 class="card-title">Daily Steps</h3>
+        <span class="card-badge" id="steps-pct">0%</span>
+      </div>
+      <div class="steps-main">
+        <div class="steps-num-wrap">
+          <div class="steps-num" id="steps-display">0</div>
+          <div class="steps-goal">/ 10,000 steps</div>
+        </div>
+        <div class="steps-ring-wrap">
+          <svg viewBox="0 0 80 80" width="80" height="80">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="var(--bg3)" stroke-width="6"/>
+            <circle id="steps-ring" cx="40" cy="40" r="34" fill="none"
+              stroke="var(--go)" stroke-width="6"
+              stroke-dasharray="213.6" stroke-dashoffset="213.6"
+              stroke-linecap="round" transform="rotate(-90 40 40)"/>
+          </svg>
+        </div>
+      </div>
+      <div class="steps-quick-btns">
+        <button class="steps-add-btn" onclick="addSteps(1000)">+1k</button>
+        <button class="steps-add-btn" onclick="addSteps(2000)">+2k</button>
+        <button class="steps-add-btn" onclick="addSteps(5000)">+5k</button>
+        <button class="steps-add-btn" onclick="addSteps(10000)">10k &#10003;</button>
+      </div>
+      <div class="steps-input-row">
+        <input type="number" id="steps-input" class="bmi-input" placeholder="Enter steps" min="0" max="50000" style="flex:1;"/>
+        <button class="bmi-calc-btn" onclick="setSteps()" style="width:auto;padding:10px 14px;">Set</button>
+        <button class="bmi-calc-btn" onclick="resetSteps()" style="width:auto;padding:10px 14px;background:var(--bg3);color:var(--t2);box-shadow:none;">Reset</button>
+      </div>
+    </div>
+
     <!-- Workout Card -->
     <div class="card">
       <div class="wo-header">
@@ -191,6 +225,31 @@
         <div class="wo-track"><div class="wo-fill" id="workout-progress-bar" style="width:0%"></div></div>
       </div>
       <div id="exercise-list"></div>
+    </div>
+
+    <!-- REST TIMER -->
+    <div class="rest-timer-wrap" id="rest-timer-wrap" style="display:none;">
+      <div class="rest-timer-header">
+        <span class="rest-timer-label">Rest Timer</span>
+        <button class="rest-timer-close" id="rest-timer-close" aria-label="Close rest timer">&#10005;</button>
+      </div>
+      <div class="rest-timer-ring-wrap">
+        <svg class="rest-ring-svg" viewBox="0 0 100 100">
+          <circle class="rest-ring-track" cx="50" cy="50" r="42" fill="none" stroke-width="6"/>
+          <circle class="rest-ring-fill" id="rest-ring-fill" cx="50" cy="50" r="42" fill="none" stroke-width="6"
+            stroke-dasharray="264" stroke-dashoffset="0"
+            stroke-linecap="round" transform="rotate(-90 50 50)"/>
+          <text class="rest-ring-num" id="rest-timer-num" x="50" y="54" text-anchor="middle">60</text>
+          <text class="rest-ring-sub" x="50" y="66" text-anchor="middle">seconds</text>
+        </svg>
+      </div>
+      <div class="rest-timer-btns">
+        <button class="rest-preset-btn" onclick="setRestTimer(30)">30s</button>
+        <button class="rest-preset-btn active" onclick="setRestTimer(60)">60s</button>
+        <button class="rest-preset-btn" onclick="setRestTimer(90)">90s</button>
+        <button class="rest-preset-btn" onclick="setRestTimer(120)">2min</button>
+      </div>
+      <button class="rest-start-btn" id="rest-start-btn" onclick="toggleRestTimer()">Start Rest</button>
     </div>
 
     <!-- Meals Card -->
@@ -288,6 +347,77 @@
         <tr><td>Protein Days Hit</td><td id="stat-prot-days">0</td></tr>
         <tr><td>Achievements</td><td id="stat-achievements">0 / 16</td></tr>
       </table>
+    </div>
+
+    <!-- BMI CARD -->
+    <div class="card bmi-card">
+      <div class="card-title">BMI Calculator</div>
+      <div class="bmi-layout">
+        <div class="bmi-inputs">
+          <div class="bmi-input-group">
+            <label class="bmi-label">Weight (kg)</label>
+            <input type="number" class="bmi-input" id="bmi-weight" value="80" min="30" max="200"/>
+          </div>
+          <div class="bmi-input-group">
+            <label class="bmi-label">Height (cm)</label>
+            <input type="number" class="bmi-input" id="bmi-height" value="177" min="100" max="250"/>
+          </div>
+          <button class="bmi-calc-btn" onclick="calcBMI()">Calculate</button>
+        </div>
+        <div class="bmi-result-wrap">
+          <svg class="bmi-ring-svg" viewBox="0 0 120 120">
+            <circle class="bmi-ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="8"/>
+            <circle class="bmi-ring-fill" id="bmi-ring-fill" cx="60" cy="60" r="50" fill="none" stroke-width="8"
+              stroke-dasharray="314" stroke-dashoffset="314" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <text class="bmi-ring-num" id="bmi-num" x="60" y="56" text-anchor="middle">--</text>
+            <text class="bmi-ring-cat" id="bmi-cat-ring" x="60" y="70" text-anchor="middle">BMI</text>
+          </svg>
+          <div class="bmi-category" id="bmi-category">Enter your stats</div>
+        </div>
+      </div>
+      <div class="bmi-scale">
+        <div class="bmi-scale-bar">
+          <div class="bmi-scale-seg underweight">Underweight<br/>&lt;18.5</div>
+          <div class="bmi-scale-seg normal">Normal<br/>18.5&#8211;24.9</div>
+          <div class="bmi-scale-seg overweight">Overweight<br/>25&#8211;29.9</div>
+          <div class="bmi-scale-seg obese">Obese<br/>&gt;30</div>
+        </div>
+        <div class="bmi-indicator" id="bmi-indicator" style="left:0%;display:none;"></div>
+      </div>
+    </div>
+
+    <!-- WEIGHT LOG CARD -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Weight Log</h3>
+        <span class="card-badge">Goal: Cut fat, maintain muscle</span>
+      </div>
+      <div class="weight-log-input-row">
+        <input type="number" id="weight-input" class="bmi-input" placeholder="80.0" min="40" max="200" step="0.1" style="max-width:120px;"/>
+        <span class="weight-unit">kg</span>
+        <button class="bmi-calc-btn" style="width:auto;padding:10px 16px;" onclick="logWeight()">Log Today</button>
+      </div>
+      <div class="weight-chart-wrap">
+        <canvas id="weight-chart" height="80"></canvas>
+      </div>
+      <div class="weight-stats-row">
+        <div class="weight-stat">
+          <div class="weight-stat-label">Start</div>
+          <div class="weight-stat-val" id="wstat-start">80 kg</div>
+        </div>
+        <div class="weight-stat">
+          <div class="weight-stat-label">Current</div>
+          <div class="weight-stat-val green" id="wstat-current">-- kg</div>
+        </div>
+        <div class="weight-stat">
+          <div class="weight-stat-label">Change</div>
+          <div class="weight-stat-val" id="wstat-change">-- kg</div>
+        </div>
+        <div class="weight-stat">
+          <div class="weight-stat-label">Goal</div>
+          <div class="weight-stat-val amber">Lean</div>
+        </div>
+      </div>
     </div>
 
     <!-- Achievements -->

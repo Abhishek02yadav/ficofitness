@@ -357,6 +357,7 @@ function renderToday() {
   renderWater();
   updateXPBar();
   renderStreakBadge();
+  renderSteps();
 }
 
 function renderWeekGrid() {
@@ -429,6 +430,11 @@ function renderExercises() {
       saveState();
       if (!wasDone) {
         awardXP(XP_VALUES.exercise, 'Exercise done');
+        const rtWrap = document.getElementById('rest-timer-wrap');
+        if (rtWrap && typeof window.setRestTimer === 'function') {
+          rtWrap.style.display = 'block';
+          window.setRestTimer(window._restDuration || 60);
+        }
       } else {
         state.totalXP = Math.max(0, state.totalXP - XP_VALUES.exercise);
         updateXPBar();
@@ -1108,3 +1114,275 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 // ═══════════ END LIGHTNING TIMER ═══════════
+
+// ═══════════ REST TIMER ═══════════
+(function initRestTimer() {
+  let restDuration = 60;
+  let restRemaining = 60;
+  let restRunning = false;
+  let restInterval = null;
+  const CIRCUMFERENCE = 2 * Math.PI * 42;
+
+  function updateRestDisplay() {
+    const num  = document.getElementById('rest-timer-num');
+    const ring = document.getElementById('rest-ring-fill');
+    if (!num || !ring) return;
+    num.textContent = restRemaining;
+    const progress = restRemaining / restDuration;
+    const offset = CIRCUMFERENCE * (1 - progress);
+    ring.setAttribute('stroke-dasharray', CIRCUMFERENCE);
+    ring.setAttribute('stroke-dashoffset', offset);
+    ring.style.stroke = progress > 0.5 ? 'var(--go)' : progress > 0.25 ? 'var(--warn)' : 'var(--fire)';
+  }
+
+  window.setRestTimer = function(secs) {
+    clearInterval(restInterval);
+    restRunning = false;
+    restDuration = secs;
+    restRemaining = secs;
+    window._restDuration = secs;
+    updateRestDisplay();
+    document.querySelectorAll('.rest-preset-btn').forEach(b => {
+      b.classList.toggle('active',
+        (b.textContent === '2min' && secs === 120) ||
+        (b.textContent !== '2min' && parseInt(b.textContent) === secs));
+    });
+    const btn = document.getElementById('rest-start-btn');
+    if (btn) { btn.textContent = 'Start Rest'; btn.classList.remove('running'); }
+  };
+
+  window.toggleRestTimer = function() {
+    const btn = document.getElementById('rest-start-btn');
+    if (restRunning) {
+      clearInterval(restInterval);
+      restRunning = false;
+      if (btn) { btn.textContent = 'Resume'; btn.classList.remove('running'); }
+    } else {
+      restRunning = true;
+      if (btn) { btn.textContent = 'Pause'; btn.classList.add('running'); }
+      restInterval = setInterval(() => {
+        restRemaining--;
+        updateRestDisplay();
+        if (restRemaining <= 0) {
+          clearInterval(restInterval);
+          restRunning = false;
+          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          const wrap = document.getElementById('rest-timer-wrap');
+          if (wrap) {
+            wrap.style.borderColor = 'var(--go)';
+            wrap.style.boxShadow = '0 0 20px var(--go-border)';
+            setTimeout(() => { wrap.style.borderColor = ''; wrap.style.boxShadow = ''; }, 2000);
+          }
+          if (btn) { btn.textContent = 'Done! Start Again'; btn.classList.remove('running'); }
+          restRemaining = restDuration;
+          updateRestDisplay();
+        }
+      }, 1000);
+    }
+  };
+
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'rest-timer-close') {
+      clearInterval(restInterval);
+      restRunning = false;
+      const wrap = document.getElementById('rest-timer-wrap');
+      if (wrap) wrap.style.display = 'none';
+    }
+  });
+
+  updateRestDisplay();
+})();
+// ═══════════ END REST TIMER ═══════════
+
+// ═══════════ BMI CALCULATOR ═══════════
+window.calcBMI = function() {
+  const w = parseFloat(document.getElementById('bmi-weight').value);
+  const h = parseFloat(document.getElementById('bmi-height').value) / 100;
+  if (!w || !h || h <= 0) return;
+  const bmi = w / (h * h);
+  const bmiRound = bmi.toFixed(1);
+
+  document.getElementById('bmi-num').textContent = bmiRound;
+
+  let cat, color, pct;
+  if (bmi < 18.5)    { cat = 'Underweight'; color = 'var(--info)';  pct = (bmi / 18.5) * 12; }
+  else if (bmi < 25) { cat = 'Normal';      color = 'var(--go)';    pct = 12 + ((bmi-18.5)/6.4)*25; }
+  else if (bmi < 30) { cat = 'Overweight';  color = 'var(--warn)';  pct = 37 + ((bmi-25)/5)*25; }
+  else               { cat = 'Obese';        color = 'var(--fire)';  pct = Math.min(95, 62 + ((bmi-30)/10)*33); }
+
+  const catEl = document.getElementById('bmi-category');
+  const catRingEl = document.getElementById('bmi-cat-ring');
+  if (catEl) catEl.textContent = cat + ' — BMI ' + bmiRound;
+  if (catRingEl) catRingEl.textContent = cat;
+
+  const ring = document.getElementById('bmi-ring-fill');
+  if (ring) {
+    ring.style.stroke = color;
+    ring.setAttribute('stroke-dashoffset', 314 * (1 - Math.min(1, bmi / 35)));
+  }
+
+  const ind = document.getElementById('bmi-indicator');
+  if (ind) { ind.style.display = 'block'; ind.style.left = pct + '%'; }
+
+  state.currentBMI = parseFloat(bmiRound);
+  saveState();
+};
+// ═══════════ END BMI ═══════════
+
+// ═══════════ WEIGHT LOG ═══════════
+window.logWeight = function() {
+  const val = parseFloat(document.getElementById('weight-input').value);
+  if (!val || val < 30 || val > 300) return;
+  if (!state.weightLog) state.weightLog = {};
+  state.weightLog[todayKey()] = val;
+  saveState();
+  renderWeightChart();
+  renderWeightStats();
+  showXPToast('+5 XP  Weight logged!');
+};
+
+function renderWeightStats() {
+  if (!state.weightLog) return;
+  const entries = Object.entries(state.weightLog).sort((a, b) => a[0].localeCompare(b[0]));
+  if (!entries.length) return;
+  const first = entries[0][1];
+  const last  = entries[entries.length - 1][1];
+  const change = (last - first).toFixed(1);
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('wstat-start',   first + ' kg');
+  set('wstat-current', last + ' kg');
+  const el3 = document.getElementById('wstat-change');
+  if (el3) {
+    el3.textContent = (change > 0 ? '+' : '') + change + ' kg';
+    el3.style.color = change < 0 ? 'var(--go)' : change > 0 ? 'var(--fire)' : 'var(--t2)';
+  }
+}
+
+function renderWeightChart() {
+  const canvas = document.getElementById('weight-chart');
+  if (!canvas) return;
+  const ctx2 = canvas.getContext('2d');
+  const wrap = canvas.parentElement;
+  canvas.width  = wrap.offsetWidth - 24;
+  canvas.height = 80;
+  const W2 = canvas.width, H2 = canvas.height;
+  ctx2.clearRect(0, 0, W2, H2);
+
+  if (!state.weightLog) return;
+  const entries = Object.entries(state.weightLog).sort((a, b) => a[0].localeCompare(b[0]));
+  if (entries.length < 2) {
+    ctx2.fillStyle = 'rgba(139,137,168,0.3)';
+    ctx2.font = '12px Inter, sans-serif';
+    ctx2.textAlign = 'center';
+    ctx2.fillText(entries.length < 1 ? 'No weight logged yet.' : 'Log at least 2 entries to see chart', W2/2, H2/2);
+    return;
+  }
+
+  const vals = entries.map(e => e[1]);
+  const minV = Math.min(...vals) - 1;
+  const maxV = Math.max(...vals) + 1;
+  const pad  = 10;
+  const getX = i => pad + (i / (vals.length - 1)) * (W2 - pad * 2);
+  const getY = v => pad + (1 - (v - minV) / (maxV - minV)) * (H2 - pad * 2);
+
+  ctx2.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx2.lineWidth = 1;
+  for (let i = 0; i <= 3; i++) {
+    const y = pad + (H2 - pad * 2) * (i / 3);
+    ctx2.beginPath(); ctx2.moveTo(0, y); ctx2.lineTo(W2, y); ctx2.stroke();
+  }
+
+  const grad = ctx2.createLinearGradient(0, 0, 0, H2);
+  grad.addColorStop(0, 'rgba(124,92,252,0.3)');
+  grad.addColorStop(1, 'rgba(124,92,252,0)');
+
+  ctx2.beginPath();
+  ctx2.moveTo(getX(0), H2);
+  vals.forEach((v, i) => ctx2.lineTo(getX(i), getY(v)));
+  ctx2.lineTo(getX(vals.length - 1), H2);
+  ctx2.closePath();
+  ctx2.fillStyle = grad;
+  ctx2.fill();
+
+  ctx2.beginPath();
+  ctx2.strokeStyle = '#7C5CFC';
+  ctx2.lineWidth = 2;
+  ctx2.lineJoin = 'round';
+  vals.forEach((v, i) => i === 0 ? ctx2.moveTo(getX(i), getY(v)) : ctx2.lineTo(getX(i), getY(v)));
+  ctx2.stroke();
+
+  vals.forEach((v, i) => {
+    ctx2.beginPath();
+    ctx2.arc(getX(i), getY(v), 3, 0, Math.PI * 2);
+    ctx2.fillStyle = '#9B82FD';
+    ctx2.shadowBlur = 6; ctx2.shadowColor = '#7C5CFC';
+    ctx2.fill();
+    ctx2.shadowBlur = 0;
+  });
+}
+
+function initWeightLog() {
+  renderWeightChart();
+  renderWeightStats();
+}
+initWeightLog();
+// ═══════════ END WEIGHT LOG ═══════════
+
+// ═══════════ STEPS TRACKER ═══════════
+function getSteps() {
+  if (!state.stepsLog) state.stepsLog = {};
+  return state.stepsLog[todayKey()] || 0;
+}
+
+function saveSteps(val) {
+  if (!state.stepsLog) state.stepsLog = {};
+  const prev = getSteps();
+  state.stepsLog[todayKey()] = Math.max(0, Math.min(99999, val));
+  if (prev < 10000 && val >= 10000) {
+    awardXP(10, '10k Steps!');
+  }
+  saveState();
+  renderSteps();
+}
+
+window.addSteps   = function(n) { saveSteps(getSteps() + n); };
+window.setSteps   = function() { const v = parseInt(document.getElementById('steps-input').value); if (!isNaN(v)) saveSteps(v); };
+window.resetSteps = function() { saveSteps(0); };
+
+function renderSteps() {
+  const steps = getSteps();
+  const pct   = Math.min(100, Math.round(steps / 10000 * 100));
+  const CIRC  = 213.6;
+  const el    = document.getElementById('steps-display');
+  const ring  = document.getElementById('steps-ring');
+  const pctEl = document.getElementById('steps-pct');
+  if (el)    el.textContent = steps.toLocaleString('en-IN');
+  if (ring)  {
+    ring.setAttribute('stroke-dashoffset', CIRC * (1 - pct / 100));
+    ring.style.stroke = pct >= 100 ? 'var(--go)' : pct >= 50 ? 'var(--p)' : 'var(--fire)';
+  }
+  if (pctEl) pctEl.textContent = pct + '%';
+}
+
+renderSteps();
+// ═══════════ END STEPS TRACKER ═══════════
+
+// ═══════════ SCROLL REVEAL ═══════════
+(function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.05 });
+
+  document.querySelectorAll('.card, .stat-tile').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.35s ease ' + (i * 0.04) + 's, transform 0.35s ease ' + (i * 0.04) + 's';
+    observer.observe(el);
+  });
+})();
+// ═══════════ END SCROLL REVEAL ═══════════
