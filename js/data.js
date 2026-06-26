@@ -1,83 +1,88 @@
 // FicoFit V2 FINAL — Data Layer — NO EMOJI IN THIS FILE
 const DAYS      = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DAY_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const DAY_FOCUS = ['Gym Push','Gym Pull','Gym Legs','Cali Push','Cali Pull','Hybrid','Rest'];
-const DAY_LABEL = ['GYM','GYM','GYM','CALI','CALI','HYB','REST'];
+const DAY_FOCUS = ['Chest + Tri','Back + Bi','Shoulders + Core','Legs','Chest + Back','Shoulders + Arms','Rest Day'];
+const DAY_LABEL = ['CHT','BCK','SHD','LEG','CHB','ARM','REST'];
 const DAY_TYPE  = ['push','pull','legs','push','pull','hybrid','rest'];
 
 const WORKOUTS = {
   0: {
-    label: 'Push Day — Gym',
+    label: 'Chest + Triceps',
     type: 'GYM',
     exercises: [
-      { name: 'Barbell Bench Press',         sets: '4 x 8'   },
-      { name: 'Incline DB Press',             sets: '3 x 10'  },
-      { name: 'Lateral Raises',               sets: '3 x 15'  },
-      { name: 'OHP Seated DB',                sets: '3 x 10'  },
-      { name: 'Tricep Pushdown',              sets: '3 x 12'  },
-      { name: 'Overhead Tricep Extension',    sets: '2 x 15'  },
+      { name: 'Barbell Bench Press',         sets: '4 x 8'  },
+      { name: 'Incline Dumbbell Press',       sets: '3 x 10' },
+      { name: 'Cable Chest Fly',              sets: '3 x 12' },
+      { name: 'Tricep Pushdown (Cable)',      sets: '3 x 12' },
+      { name: 'Overhead Tricep Extension',    sets: '3 x 12' },
+      { name: 'Close Grip Bench Press',       sets: '2 x 10' },
     ]
   },
   1: {
-    label: 'Pull Day — Gym',
+    label: 'Back + Biceps',
     type: 'GYM',
     exercises: [
-      { name: 'Deadlift (form focus)',        sets: '4 x 6'   },
-      { name: 'Bent Over Row',                sets: '3 x 10'  },
-      { name: 'Lat Pulldown',                 sets: '3 x 12'  },
-      { name: 'Face Pulls',                   sets: '3 x 15'  },
-      { name: 'Barbell Curl',                 sets: '3 x 12'  },
-      { name: 'Hammer Curl',                  sets: '2 x 15'  },
+      { name: 'Deadlift (form focus)',        sets: '4 x 6'  },
+      { name: 'Bent Over Barbell Row',        sets: '3 x 10' },
+      { name: 'Lat Pulldown',                 sets: '3 x 12' },
+      { name: 'Seated Cable Row',             sets: '3 x 12' },
+      { name: 'Barbell Curl',                 sets: '3 x 12' },
+      { name: 'Hammer Curl',                  sets: '2 x 15' },
     ]
   },
   2: {
-    label: 'Legs — Gym',
+    label: 'Shoulders + Core',
     type: 'GYM',
     exercises: [
-      { name: 'Squat',                        sets: '4 x 8'   },
-      { name: 'Romanian Deadlift',            sets: '3 x 10'  },
-      { name: 'Leg Press',                    sets: '3 x 12'  },
-      { name: 'Leg Curl Machine',             sets: '3 x 12'  },
-      { name: 'Calf Raises',                  sets: '4 x 20'  },
+      { name: 'Seated DB Overhead Press',     sets: '4 x 10'  },
+      { name: 'Lateral Raises',               sets: '4 x 15'  },
+      { name: 'Front Raises',                 sets: '3 x 12'  },
+      { name: 'Face Pulls (Cable)',            sets: '3 x 15'  },
       { name: 'Plank',                        sets: '3 x 45s' },
+      { name: 'Ab Crunch / Leg Raises',       sets: '3 x 15'  },
     ]
   },
   3: {
-    label: 'Push — Calisthenics',
-    type: 'CALI',
+    label: 'Legs',
+    type: 'GYM',
     exercises: [
-      { name: 'Push-ups (full ROM)',          sets: '4 x 10-15' },
-      { name: 'Pike Push-ups',                sets: '3 x 8'     },
-      { name: 'Bench Dips / Bar Dips',        sets: '3 x 8-10'  },
-      { name: 'Diamond Push-ups',             sets: '3 x 8'     },
-      { name: 'Wall Plank Hold',              sets: '3 x 20s'   },
-      { name: 'Incline Push-up to Failure',   sets: '1 x AMRAP' },
+      { name: 'Barbell Squat',                sets: '4 x 8'       },
+      { name: 'Romanian Deadlift',            sets: '3 x 10'      },
+      { name: 'Leg Press',                    sets: '3 x 12'      },
+      { name: 'Leg Curl Machine',             sets: '3 x 12'      },
+      { name: 'Calf Raises',                  sets: '4 x 20'      },
+      { name: 'Walking Lunges',               sets: '2 x 12 each' },
     ]
   },
   4: {
-    label: 'Pull — Calisthenics',
-    type: 'CALI',
+    label: 'Chest + Back (Volume)',
+    type: 'GYM',
     exercises: [
-      { name: 'Dead Hang',                    sets: '4 x 15-20s' },
-      { name: 'Australian Rows (Inv. Rows)',  sets: '4 x 8-10'   },
-      { name: 'Scapula Pull-ups',             sets: '3 x 8'      },
-      { name: 'Negative Pull-ups (slow)',     sets: '3 x 3-5'    },
-      { name: 'Hanging Knee Raises',          sets: '3 x 10'     },
+      { name: 'Incline DB Press',             sets: '3 x 12'      },
+      { name: 'DB Chest Fly',                 sets: '3 x 15'      },
+      { name: 'Cable Pullover',               sets: '3 x 12'      },
+      { name: 'Wide Grip Lat Pulldown',       sets: '3 x 12'      },
+      { name: 'One Arm DB Row',               sets: '3 x 12 each' },
+      { name: 'Chest Supported Row',          sets: '3 x 12'      },
     ]
   },
   5: {
-    label: 'Hybrid Full Body',
-    type: 'HYB',
+    label: 'Shoulders + Arms',
+    type: 'GYM',
     exercises: [
-      { name: 'Weighted Pull-ups / Muscle-up Neg', sets: '3 x 5'      },
-      { name: 'DB Lunges',                         sets: '3 x 12 each' },
-      { name: 'Archer Push-ups',                   sets: '3 x 10'     },
-      { name: 'Cable Rows',                        sets: '3 x 12'     },
-      { name: 'Hollow Body Hold',                  sets: '3 x 30s'    },
-      { name: 'V-ups',                             sets: '3 x 15'     },
+      { name: 'Arnold Press',                 sets: '3 x 12'      },
+      { name: 'Lateral Raises (drop set)',    sets: '3 x 15'      },
+      { name: 'Preacher Curl',                sets: '3 x 12'      },
+      { name: 'Concentration Curl',           sets: '2 x 12 each' },
+      { name: 'Skull Crushers',               sets: '3 x 12'      },
+      { name: 'Tricep Dips (bench)',          sets: '3 x 15'      },
     ]
   },
-  6: { label: 'Rest Day', type: 'REST', exercises: [] }
+  6: {
+    label: 'Rest Day',
+    type: 'REST',
+    exercises: []
+  }
 };
 
 const MEALS = [
