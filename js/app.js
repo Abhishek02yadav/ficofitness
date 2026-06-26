@@ -435,7 +435,12 @@ function renderExercises() {
       const wasDone = !!state.completedExercises[k];
       state.completedExercises[k] = !wasDone;
       saveState();
-      if (!wasDone) awardXP(XP_VALUES.exercise, 'Exercise done');
+      if (!wasDone) {
+        awardXP(XP_VALUES.exercise, 'Exercise done');
+      } else {
+        state.totalXP = Math.max(0, state.totalXP - XP_VALUES.exercise);
+        updateXPBar();
+      }
       checkWorkoutComplete();
       checkFullDayComplete();
       checkAchievements();
@@ -472,6 +477,13 @@ function checkWorkoutComplete() {
     updateStreak(true);
     renderWeekGrid();
     renderStreakBadge();
+  } else if (done < total && state.completedWorkouts[wKey]) {
+    state.completedWorkouts[wKey] = false;
+    saveState();
+    state.totalXP = Math.max(0, state.totalXP - XP_VALUES.workoutComplete);
+    updateXPBar();
+    renderWeekGrid();
+    renderStreakBadge();
   }
 }
 
@@ -495,10 +507,12 @@ function checkFullDayComplete() {
 }
 
 function renderStreakBadge() {
-  const el = document.getElementById('streak-value');
-  if (el) el.textContent = state.currentStreak;
-  const el2 = document.getElementById('streak-longest');
-  if (el2) el2.textContent = state.longestStreak;
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('streak-value',   state.currentStreak);
+  set('streak-longest', state.longestStreak);
+  set('mob-streak-val', state.currentStreak);
+  set('stat-streak',    state.currentStreak);
+  set('stat-longest',   state.longestStreak);
 }
 
 // ── Meals ─────────────────────────────────────────────────────────────────────
@@ -529,7 +543,12 @@ function renderMealsToday() {
       const wasDone = !!state.completedMeals[k];
       state.completedMeals[k] = !wasDone;
       saveState();
-      if (!wasDone) awardXP(XP_VALUES.meal, 'Meal logged');
+      if (!wasDone) {
+        awardXP(XP_VALUES.meal, 'Meal logged');
+      } else {
+        state.totalXP = Math.max(0, state.totalXP - XP_VALUES.meal);
+        updateXPBar();
+      }
       updateNutritionTracking();
       checkFullDayComplete();
       checkAchievements();
@@ -776,7 +795,12 @@ function renderSupps() {
       const wasDone = !!state.completedSupps[k];
       state.completedSupps[k] = !wasDone;
       saveState();
-      if (!wasDone) awardXP(XP_VALUES.supplement, 'Supplement taken');
+      if (!wasDone) {
+        awardXP(XP_VALUES.supplement, 'Supplement taken');
+      } else {
+        state.totalXP = Math.max(0, state.totalXP - XP_VALUES.supplement);
+        updateXPBar();
+      }
       checkFullDayComplete();
       checkAchievements();
       renderSupps();
