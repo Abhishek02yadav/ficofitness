@@ -1205,10 +1205,19 @@ window.calcBMI = function() {
   document.getElementById('bmi-num').textContent = bmiRound;
 
   let cat, color, pct;
-  if (bmi < 18.5)    { cat = 'Underweight'; color = 'var(--info)';  pct = (bmi / 18.5) * 12; }
-  else if (bmi < 25) { cat = 'Normal';      color = 'var(--go)';    pct = 12 + ((bmi-18.5)/6.4)*25; }
-  else if (bmi < 30) { cat = 'Overweight';  color = 'var(--warn)';  pct = 37 + ((bmi-25)/5)*25; }
-  else               { cat = 'Obese';        color = 'var(--fire)';  pct = Math.min(95, 62 + ((bmi-30)/10)*33); }
+  if (bmi < 18.5) {
+    cat = 'Underweight'; color = 'var(--info)';
+    pct = Math.max(2, (bmi / 18.5) * 25);
+  } else if (bmi < 25) {
+    cat = 'Normal'; color = 'var(--go)';
+    pct = 25 + ((bmi - 18.5) / (25 - 18.5)) * 25;
+  } else if (bmi < 30) {
+    cat = 'Overweight'; color = 'var(--warn)';
+    pct = 50 + ((bmi - 25) / (30 - 25)) * 25;
+  } else {
+    cat = 'Obese'; color = 'var(--fire)';
+    pct = Math.min(97, 75 + ((bmi - 30) / 10) * 25);
+  }
 
   const catEl = document.getElementById('bmi-category');
   const catRingEl = document.getElementById('bmi-cat-ring');
