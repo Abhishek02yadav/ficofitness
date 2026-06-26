@@ -596,10 +596,12 @@ function renderWater() {
   const key     = todayKey();
   const glasses = state.waterGlasses[key] || 0;
   document.querySelectorAll('.water-btn').forEach((btn, i) => {
-    btn.classList.toggle('filled', i < glasses);
+    btn.classList.toggle('filled', (i % 8) < glasses);
   });
   const countEl = document.getElementById('water-count');
   if (countEl) countEl.textContent = glasses + '/8 glasses';
+  const suppsEl = document.getElementById('water-count-supps');
+  if (suppsEl) suppsEl.textContent = glasses + '/8 glasses today';
 
   if (glasses >= 8 && !state.completedWorkouts[key + '_water']) {
     state.completedWorkouts[key + '_water'] = true;
@@ -614,7 +616,8 @@ function initWaterButtons() {
     btn.addEventListener('click', () => {
       const key     = todayKey();
       const current = state.waterGlasses[key] || 0;
-      state.waterGlasses[key] = i < current ? i : i + 1;
+      const idx = i % 8;
+      state.waterGlasses[key] = idx < current ? idx : idx + 1;
       saveState();
       renderWater();
       checkFullDayComplete();
