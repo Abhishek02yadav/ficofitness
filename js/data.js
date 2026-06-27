@@ -1,25 +1,12 @@
 // FicoFit V2 FINAL — Data Layer — NO EMOJI IN THIS FILE
 const DAYS      = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DAY_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const DAY_FOCUS = ['Chest + Tri','Back + Bi','Shoulders + Core','Legs','Chest + Back','Shoulders + Arms','Rest Day'];
-const DAY_LABEL = ['CHT','BCK','SHD','LEG','CHB','ARM','REST'];
+const DAY_FOCUS = ['Back + Bi','Chest + Tri','Shoulders + Core','Legs','Chest + Back','Shoulders + Arms','Rest Day'];
+const DAY_LABEL = ['BCK','CHT','SHD','LEG','CHB','ARM','REST'];
 const DAY_TYPE  = ['push','pull','legs','push','pull','hybrid','rest'];
 
 const WORKOUTS = {
   0: {
-    label: 'Chest + Triceps',
-    type: 'CHT',
-    note: 'Compound: 90s rest | Isolation: 60s rest',
-    exercises: [
-      { name: 'Barbell Bench Press',        sets: '4 x 8',       type: 'compound'  },
-      { name: 'Incline Dumbbell Press',     sets: '3 x 10',      type: 'compound'  },
-      { name: 'Cable Chest Fly',            sets: '3 x 12',      type: 'isolation' },
-      { name: 'Tricep Pushdown (Cable)',    sets: '3 x 12',      type: 'isolation' },
-      { name: 'Overhead Tricep Extension', sets: '3 x 12',      type: 'isolation' },
-      { name: 'Close Grip Bench Press',    sets: '2 x 10',      type: 'compound'  },
-    ]
-  },
-  1: {
     label: 'Back + Biceps',
     type: 'BCK',
     note: 'Compound: 90s rest | Isolation: 60s rest',
@@ -30,6 +17,19 @@ const WORKOUTS = {
       { name: 'Seated Cable Row',          sets: '3 x 12',      type: 'compound'  },
       { name: 'Barbell Curl',              sets: '3 x 12',      type: 'isolation' },
       { name: 'Hammer Curl',              sets: '2 x 15',      type: 'isolation' },
+    ]
+  },
+  1: {
+    label: 'Chest + Triceps',
+    type: 'CHT',
+    note: 'Compound: 90s rest | Isolation: 60s rest',
+    exercises: [
+      { name: 'Barbell Bench Press',        sets: '4 x 8',       type: 'compound'  },
+      { name: 'Incline Dumbbell Press',     sets: '3 x 10',      type: 'compound'  },
+      { name: 'Cable Chest Fly',            sets: '3 x 12',      type: 'isolation' },
+      { name: 'Tricep Pushdown (Cable)',    sets: '3 x 12',      type: 'isolation' },
+      { name: 'Overhead Tricep Extension', sets: '3 x 12',      type: 'isolation' },
+      { name: 'Close Grip Bench Press',    sets: '2 x 10',      type: 'compound'  },
     ]
   },
   2: {
