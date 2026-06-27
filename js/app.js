@@ -390,7 +390,7 @@ function renderWeekGrid() {
 }
 
 function renderExercises() {
-  const dayIdx  = todayDayIndex();
+  const dayIdx  = getViewDay();
   const key     = todayKey();
   const workout = WORKOUTS[dayIdx];
   const list    = document.getElementById('exercise-list');
@@ -399,6 +399,14 @@ function renderExercises() {
 
   const wkLbl = document.getElementById('workout-label');
   if (wkLbl) wkLbl.textContent = workout.label;
+
+  const noteEl = document.getElementById('workout-rest-note');
+  if (noteEl && workout.note) {
+    noteEl.textContent = workout.note;
+    noteEl.style.display = 'inline-block';
+  } else if (noteEl) {
+    noteEl.style.display = 'none';
+  }
 
   if (dayIdx === 6) {
     list.innerHTML = '<p class="rest-msg">Rest day. Recover, hydrate, and sleep well.</p>';
@@ -433,7 +441,8 @@ function renderExercises() {
         const rtWrap = document.getElementById('rest-timer-wrap');
         if (rtWrap && typeof window.setRestTimer === 'function') {
           rtWrap.style.display = 'block';
-          window.setRestTimer(window._restDuration || 60);
+          const autoTime = (ex && ex.type === 'compound') ? 90 : 60;
+          window.setRestTimer(autoTime);
         }
       } else {
         state.totalXP = Math.max(0, state.totalXP - XP_VALUES.exercise);
@@ -748,6 +757,10 @@ function renderDiet() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('diet-total-cal',  TOTAL_CALORIES + ' kcal / day');
   set('diet-total-prot', TOTAL_PROTEIN  + 'g protein / day');
+  if (typeof DIET_TARGETS !== 'undefined') {
+    set('diet-target-carbs', DIET_TARGETS.carbs + 'g carbs / day');
+    set('diet-target-fat',   DIET_TARGETS.fat   + 'g fat / day');
+  }
 }
 
 // ── Budget Tab ────────────────────────────────────────────────────────────────
@@ -1398,3 +1411,63 @@ renderSteps();
   });
 })();
 // ═══════════ END SCROLL REVEAL ═══════════
+
+// ═══════════ DAY PILLS + NEXT DAY PREVIEW ═══════════
+let _viewDay = null;
+
+function getViewDay() {
+  return _viewDay !== null ? _viewDay : todayDayIndex();
+}
+
+window.jumpToDay = function(idx) {
+  _viewDay = idx;
+  renderExercises();
+  renderDayPills();
+  renderNextDayPreview();
+};
+
+function renderDayPills() {
+  const wrap    = document.getElementById('day-pills-wrap');
+  if (!wrap) return;
+  const todayI  = todayDayIndex();
+  const viewI   = getViewDay();
+  const key     = todayKey();
+
+  wrap.innerHTML = DAY_SHORT.map((short, i) => {
+    const isToday  = i === todayI;
+    const isActive = i === viewI;
+    const isDone   = !!state.completedWorkouts[key + '_' + i];
+    let cls = 'day-pill';
+    if (isActive)       cls += ' active';
+    else if (isToday)   cls += ' today-pill';
+    if (isDone && !isActive) cls += ' done-pill';
+    const dot   = isDone ? '<span class="pill-dot"></span>' : '';
+    const label = isToday && !isActive ? short + ' &middot;Today' : short;
+    return '<button class="' + cls + '" onclick="jumpToDay(' + i + ')">' +
+      label + dot + '<br><span class="pill-sub">' + DAY_LABEL[i] + '</span></button>';
+  }).join('');
+}
+
+function renderNextDayPreview() {
+  const card   = document.getElementById('next-day-card');
+  if (!card) return;
+  const nextIdx = (getViewDay() + 1) % 7;
+  const nextW   = WORKOUTS[nextIdx];
+  if (!nextW || nextW.exercises.length === 0) { card.style.display = 'none'; return; }
+  const title  = document.getElementById('next-day-title');
+  const exList = document.getElementById('next-day-exercises');
+  if (title)  title.textContent = DAYS[nextIdx] + ' — ' + nextW.label;
+  if (exList) exList.innerHTML  = nextW.exercises.map(ex =>
+    '<div class="next-day-ex">' +
+    '<span class="next-day-ex-name">' + ex.name + '</span>' +
+    '<span class="next-day-ex-sets">' + ex.sets + '</span>' +
+    '</div>'
+  ).join('');
+  card.style.display = 'block';
+}
+
+setTimeout(function() {
+  renderDayPills();
+  renderNextDayPreview();
+}, 120);
+// ═══════════ END DAY PILLS ═══════════

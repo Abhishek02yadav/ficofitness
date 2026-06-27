@@ -1132,3 +1132,78 @@ body::after {
 }
 .steps-add-btn:hover { background: var(--go-dim); border-color: var(--go-border); color: var(--go); }
 .steps-input-row { display: flex; gap: 8px; align-items: center; }
+
+/* ── WORKOUT REST NOTE ── */
+.workout-rest-note {
+  font-size: 11px;
+  color: var(--warn);
+  background: var(--warn-dim);
+  border: 1px solid var(--warn-border);
+  border-radius: 99px;
+  padding: 4px 12px;
+  display: inline-block;
+  margin-top: 6px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ── DAY PILLS ── */
+.day-pills-wrap {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.day-pill {
+  padding: 6px 10px; border-radius: var(--radius-sm);
+  border: 1px solid var(--b2); background: var(--bg3);
+  color: var(--t2); font-size: 11px; font-weight: 700;
+  cursor: pointer; font-family: 'Syne', sans-serif;
+  transition: all var(--trans); text-align: center;
+  line-height: 1.4; min-width: 48px;
+}
+.day-pill:hover {
+  border-color: var(--p-border); color: var(--p2);
+  background: var(--p-dim); transform: translateY(-1px);
+}
+.day-pill.active {
+  background: var(--p-dim); border-color: var(--p-border);
+  color: var(--p2); box-shadow: 0 0 10px var(--p-dim);
+}
+.day-pill.today-pill {
+  border-color: var(--go-border); color: var(--go); background: var(--go-dim);
+}
+.day-pill.done-pill { opacity: 0.6; }
+.pill-dot {
+  display: inline-block; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--go);
+  margin-left: 3px; vertical-align: middle; margin-top: -2px;
+}
+.pill-sub { font-size: 9px; opacity: 0.6; font-weight: 400; display: block; }
+
+/* ── NEXT DAY PREVIEW ── */
+.next-day-card {
+  background: var(--glass-bg); backdrop-filter: blur(8px);
+  border: 1px solid var(--b1); border-left: 3px solid var(--warn);
+  border-radius: var(--radius); padding: 14px 16px;
+  margin-bottom: 14px; animation: slideUp 0.3s ease;
+}
+.next-day-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.next-day-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  color: var(--warn); text-transform: uppercase;
+}
+.next-day-title {
+  font-family: 'Syne', sans-serif; font-size: 14px;
+  font-weight: 700; color: var(--t1);
+}
+.next-day-exercises { display: flex; flex-direction: column; gap: 5px; }
+.next-day-ex {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 10px; border-radius: var(--radius-sm);
+  background: var(--bg3); border: 1px solid var(--b1);
+}
+.next-day-ex-name { font-size: 12px; color: var(--t2); }
+.next-day-ex-sets {
+  font-size: 11px; color: var(--t3);
+  font-family: 'JetBrains Mono', monospace; font-weight: 600;
+}

@@ -8,96 +8,119 @@ const DAY_TYPE  = ['push','pull','legs','push','pull','hybrid','rest'];
 const WORKOUTS = {
   0: {
     label: 'Chest + Triceps',
-    type: 'GYM',
+    type: 'CHT',
+    note: 'Compound: 90s rest | Isolation: 60s rest',
     exercises: [
-      { name: 'Barbell Bench Press',         sets: '4 x 8'  },
-      { name: 'Incline Dumbbell Press',       sets: '3 x 10' },
-      { name: 'Cable Chest Fly',              sets: '3 x 12' },
-      { name: 'Tricep Pushdown (Cable)',      sets: '3 x 12' },
-      { name: 'Overhead Tricep Extension',    sets: '3 x 12' },
-      { name: 'Close Grip Bench Press',       sets: '2 x 10' },
+      { name: 'Barbell Bench Press',        sets: '4 x 8',       type: 'compound'  },
+      { name: 'Incline Dumbbell Press',     sets: '3 x 10',      type: 'compound'  },
+      { name: 'Cable Chest Fly',            sets: '3 x 12',      type: 'isolation' },
+      { name: 'Tricep Pushdown (Cable)',    sets: '3 x 12',      type: 'isolation' },
+      { name: 'Overhead Tricep Extension', sets: '3 x 12',      type: 'isolation' },
+      { name: 'Close Grip Bench Press',    sets: '2 x 10',      type: 'compound'  },
     ]
   },
   1: {
     label: 'Back + Biceps',
-    type: 'GYM',
+    type: 'BCK',
+    note: 'Compound: 90s rest | Isolation: 60s rest',
     exercises: [
-      { name: 'Deadlift (form focus)',        sets: '4 x 6'  },
-      { name: 'Bent Over Barbell Row',        sets: '3 x 10' },
-      { name: 'Lat Pulldown',                 sets: '3 x 12' },
-      { name: 'Seated Cable Row',             sets: '3 x 12' },
-      { name: 'Barbell Curl',                 sets: '3 x 12' },
-      { name: 'Hammer Curl',                  sets: '2 x 15' },
+      { name: 'Deadlift (form focus)',     sets: '4 x 6',       type: 'compound'  },
+      { name: 'Bent Over Barbell Row',     sets: '3 x 10',      type: 'compound'  },
+      { name: 'Lat Pulldown',              sets: '3 x 12',      type: 'compound'  },
+      { name: 'Seated Cable Row',          sets: '3 x 12',      type: 'compound'  },
+      { name: 'Barbell Curl',              sets: '3 x 12',      type: 'isolation' },
+      { name: 'Hammer Curl',              sets: '2 x 15',      type: 'isolation' },
     ]
   },
   2: {
     label: 'Shoulders + Core',
-    type: 'GYM',
+    type: 'SHD',
+    note: 'Compound: 90s rest | Isolation: 60s rest',
     exercises: [
-      { name: 'Seated DB Overhead Press',     sets: '4 x 10'  },
-      { name: 'Lateral Raises',               sets: '4 x 15'  },
-      { name: 'Front Raises',                 sets: '3 x 12'  },
-      { name: 'Face Pulls (Cable)',            sets: '3 x 15'  },
-      { name: 'Plank',                        sets: '3 x 45s' },
-      { name: 'Ab Crunch / Leg Raises',       sets: '3 x 15'  },
+      { name: 'Seated DB Overhead Press', sets: '4 x 10',      type: 'compound'  },
+      { name: 'Lateral Raises',           sets: '4 x 15',      type: 'isolation' },
+      { name: 'Front Raises',             sets: '3 x 12',      type: 'isolation' },
+      { name: 'Face Pulls (Cable)',        sets: '3 x 15',      type: 'isolation' },
+      { name: 'Plank',                    sets: '3 x 45s',     type: 'isolation' },
+      { name: 'Hanging Leg Raises',       sets: '3 x 15',      type: 'isolation' },
     ]
   },
   3: {
     label: 'Legs',
-    type: 'GYM',
+    type: 'LEG',
+    note: 'Compound: 90s rest | Isolation: 60s rest',
     exercises: [
-      { name: 'Barbell Squat',                sets: '4 x 8'       },
-      { name: 'Romanian Deadlift',            sets: '3 x 10'      },
-      { name: 'Leg Press',                    sets: '3 x 12'      },
-      { name: 'Leg Curl Machine',             sets: '3 x 12'      },
-      { name: 'Calf Raises',                  sets: '4 x 20'      },
-      { name: 'Walking Lunges',               sets: '2 x 12 each' },
+      { name: 'Barbell Squat',            sets: '4 x 8',       type: 'compound'  },
+      { name: 'Romanian Deadlift',        sets: '3 x 10',      type: 'compound'  },
+      { name: 'Leg Press',                sets: '3 x 12',      type: 'compound'  },
+      { name: 'Leg Curl Machine',         sets: '3 x 12',      type: 'isolation' },
+      { name: 'Calf Raises',              sets: '4 x 20',      type: 'isolation' },
+      { name: 'Walking Lunges',           sets: '2 x 12 each', type: 'compound'  },
     ]
   },
   4: {
     label: 'Chest + Back (Volume)',
-    type: 'GYM',
+    type: 'CHB',
+    note: 'Light day — pump focus | 60s rest all exercises',
     exercises: [
-      { name: 'Incline DB Press',             sets: '3 x 12'      },
-      { name: 'DB Chest Fly',                 sets: '3 x 15'      },
-      { name: 'Cable Pullover',               sets: '3 x 12'      },
-      { name: 'Wide Grip Lat Pulldown',       sets: '3 x 12'      },
-      { name: 'One Arm DB Row',               sets: '3 x 12 each' },
-      { name: 'Chest Supported Row',          sets: '3 x 12'      },
+      { name: 'Incline DB Press',         sets: '3 x 12',      type: 'isolation' },
+      { name: 'DB Chest Fly',             sets: '3 x 15',      type: 'isolation' },
+      { name: 'Cable Pullover',           sets: '3 x 12',      type: 'isolation' },
+      { name: 'Wide Grip Lat Pulldown',   sets: '3 x 12',      type: 'compound'  },
+      { name: 'One Arm DB Row',           sets: '3 x 12 each', type: 'compound'  },
+      { name: 'Chest Supported Row',      sets: '3 x 12',      type: 'compound'  },
     ]
   },
   5: {
     label: 'Shoulders + Arms',
-    type: 'GYM',
+    type: 'ARM',
+    note: 'Pump day — 60s rest all | Drop sets welcome',
     exercises: [
-      { name: 'Arnold Press',                 sets: '3 x 12'      },
-      { name: 'Lateral Raises (drop set)',    sets: '3 x 15'      },
-      { name: 'Preacher Curl',                sets: '3 x 12'      },
-      { name: 'Concentration Curl',           sets: '2 x 12 each' },
-      { name: 'Skull Crushers',               sets: '3 x 12'      },
-      { name: 'Tricep Dips (bench)',          sets: '3 x 15'      },
+      { name: 'Arnold Press',             sets: '3 x 12',      type: 'compound'  },
+      { name: 'Lateral Raises (drop set)',sets: '3 x 15',      type: 'isolation' },
+      { name: 'Preacher Curl',            sets: '3 x 12',      type: 'isolation' },
+      { name: 'Concentration Curl',       sets: '2 x 12 each', type: 'isolation' },
+      { name: 'Skull Crushers',           sets: '3 x 12',      type: 'isolation' },
+      { name: 'Tricep Dips (bench)',      sets: '3 x 15',      type: 'isolation' },
     ]
   },
   6: {
     label: 'Rest Day',
     type: 'REST',
+    note: '10k steps + 3-4L paani + stretch karo',
     exercises: []
   }
 };
 
 const MEALS = [
-  { name: 'Breakfast',  time: '8:00 AM',  desc: 'Full Fat Milk 500ml + Nakpro Protein 1 scoop + Oats 70g + Banana 1', cal: 805, prot: 52, carbs: 103, fat: 24 },
-  { name: 'Snack 1',    time: '11:00 AM', desc: 'Besan Chilla 100g + Ghar Ka Dahi 150g',                               cal: 475, prot: 23, carbs: 65,  fat: 12 },
-  { name: 'Lunch',      time: '1:30 PM',  desc: '2 Roti + Ghar Ki Sabzi + Dahi 100g',                                  cal: 415, prot: 12, carbs: 70,  fat: 10 },
-  { name: 'Snack 2',    time: '5:00 PM',  desc: 'Raw Peanuts 50g',                                                     cal: 290, prot: 13, carbs: 8,   fat: 25 },
-  { name: 'Dinner',     time: '8:00 PM',  desc: '2 Roti + Ghar Ki Sabzi + Dahi 100g',                                  cal: 415, prot: 12, carbs: 70,  fat: 10 },
-  { name: 'Last Snack', time: '9:30 PM',  desc: 'Omays Soya Beans 40g MAX',                                            cal: 125, prot: 14, carbs: 8,   fat: 4  },
+  { name: 'Pre-Workout',          time: '5:00 AM',  desc: 'Nakpro Plant Protein 1 scoop + Paani + 5 Soaked Badam',                              cal: 145, prot: 22, carbs: 5,   fat: 4  },
+  { name: 'Post-Workout Breakfast', time: '7:30 AM', desc: 'Full Fat Milk 500ml + Oats 50g',                                                    cal: 520, prot: 20, carbs: 57,  fat: 21 },
+  { name: 'Snack 1',              time: '10:30 AM', desc: 'Ghar Ka Dahi 200g + Peanuts 30g',                                                    cal: 290, prot: 20, carbs: 12,  fat: 16 },
+  { name: 'Lunch',                time: '1:00 PM',  desc: 'Besan+Moong Dal Chilla (50g+50g) + Ghar Ki Sabzi + Dahi 100g + 1 Roti',             cal: 500, prot: 37, carbs: 55,  fat: 8  },
+  { name: 'Snack 2',              time: '4:30 PM',  desc: 'Soaked Chana 50g + Peanuts 20g',                                                     cal: 200, prot: 14, carbs: 22,  fat: 10 },
+  { name: 'Dinner',               time: '7:30 PM',  desc: 'Besan+Moong Dal Chilla (50g+50g) + Ghar Ki Sabzi + Dahi 100g + 1 Roti',             cal: 500, prot: 37, carbs: 55,  fat: 8  },
+  { name: 'Last Snack',           time: '8:30 PM',  desc: 'Omays Soya Beans 40g MAX -- 9 PM se pehle khatam karo!',                            cal: 125, prot: 14, carbs: 8,   fat: 4  },
 ];
 
-const TOTAL_CALORIES = MEALS.reduce((s, m) => s + m.cal,  0);  // 2525
-const TOTAL_PROTEIN  = MEALS.reduce((s, m) => s + m.prot, 0);  // 126
-const CALORIE_TARGET = Math.round(TOTAL_CALORIES * 0.8);       // 2020
-const PROTEIN_TARGET = Math.round(TOTAL_PROTEIN  * 0.8);       // 101
+const TOTAL_CALORIES = MEALS.reduce((s, m) => s + m.cal,   0);
+const TOTAL_PROTEIN  = MEALS.reduce((s, m) => s + m.prot,  0);
+const TOTAL_CARBS    = MEALS.reduce((s, m) => s + m.carbs, 0);
+const TOTAL_FAT      = MEALS.reduce((s, m) => s + m.fat,   0);
+const CALORIE_TARGET = Math.round(TOTAL_CALORIES * 0.8);
+const PROTEIN_TARGET = Math.round(TOTAL_PROTEIN  * 0.8);
+
+const DIET_TARGETS = {
+  cal: TOTAL_CALORIES, prot: TOTAL_PROTEIN, carbs: TOTAL_CARBS, fat: TOTAL_FAT,
+};
+const DIET_RULES = [
+  'Moong dal raat ko bhigo do -- subah grind karo chilla ke liye',
+  'Pre-workout 5 AM pe lo -- khali pet gym mat jao',
+  '9 PM ke baad bilkul kuch nahi khana',
+  'Soya MAX 40g/day -- gyno risk at 22 years',
+  'Pani 3-4 litre daily -- digestion + fat loss',
+  '10k steps daily -- yahi tera main cardio hai',
+  'Bhook lage toh 1 roti add karo -- warna nahi',
+];
 
 const DIET_COSTS = [
   { item: 'Full Fat Milk 500ml',  daily:  30, monthly:  900 },

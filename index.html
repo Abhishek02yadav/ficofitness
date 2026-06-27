@@ -214,12 +214,25 @@
       </div>
     </div>
 
+    <!-- Day Pills -->
+    <div class="day-pills-wrap" id="day-pills-wrap"></div>
+
+    <!-- Next Day Preview -->
+    <div class="next-day-card" id="next-day-card" style="display:none;">
+      <div class="next-day-header">
+        <span class="next-day-label">Tomorrow</span>
+        <span class="next-day-title" id="next-day-title"></span>
+      </div>
+      <div class="next-day-exercises" id="next-day-exercises"></div>
+    </div>
+
     <!-- Workout Card -->
     <div class="card">
       <div class="wo-header">
         <span class="workout-type-pill" id="workout-label">Today's Workout</span>
         <div style="font-size:12px;color:var(--t2)" id="workout-done-count">0/0</div>
       </div>
+      <div class="workout-rest-note" id="workout-rest-note" style="display:none;"></div>
       <div class="wo-prog-row">
         <span class="wo-pct" id="workout-progress-pct">0%</span>
         <div class="wo-track"><div class="wo-fill" id="workout-progress-bar" style="width:0%"></div></div>
@@ -557,11 +570,13 @@
     </div>
 
     <div class="diet-totals-row">
-      <span class="diet-total-chip" id="diet-total-cal">2525 kcal / day</span>
+      <span class="diet-total-chip" id="diet-total-cal">2280 kcal / day</span>
       <span style="color:var(--t3)">&middot;</span>
-      <span class="diet-total-chip" id="diet-total-prot">126g protein / day</span>
+      <span class="diet-total-chip" id="diet-total-prot">164g protein / day</span>
       <span style="color:var(--t3)">&middot;</span>
-      <span style="font-size:13px;color:var(--t2)">Vegetarian Recomp</span>
+      <span class="diet-total-chip" id="diet-target-carbs">214g carbs / day</span>
+      <span style="color:var(--t3)">&middot;</span>
+      <span class="diet-total-chip" id="diet-target-fat">71g fat / day</span>
     </div>
 
     <div class="card">
@@ -572,12 +587,13 @@
     <div class="card">
       <h3 class="card-title">Trainer&rsquo;s Rules</h3>
       <div style="display:flex;flex-direction:column;gap:7px">
-        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">9 PM ke baad kuch nahi khana</div>
-        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Soya max 40g/day &mdash; gyno risk at 22</div>
-        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Pani 3&ndash;4 litre daily</div>
-        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">10k steps daily &mdash; yahi tera cardio hai</div>
-        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Ghar ka dahi daily banao</div>
-        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Ghar ki sabzi avoid mat karo</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Moong dal raat ko bhigo do &mdash; subah grind karo chilla ke liye</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Pre-workout 5 AM pe lo &mdash; khali pet gym mat jao</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">9 PM ke baad bilkul kuch nahi khana</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Soya MAX 40g/day &mdash; gyno risk at 22 years</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Pani 3&ndash;4 litre daily &mdash; digestion + fat loss</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">10k steps daily &mdash; yahi tera main cardio hai</div>
+        <div style="font-size:13px;padding:9px 12px;border-radius:var(--radius-xs);background:var(--bg3);color:var(--t2);border-left:2px solid var(--warn)">Bhook lage toh 1 roti add karo &mdash; warna nahi</div>
       </div>
     </div>
 
